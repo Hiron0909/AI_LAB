@@ -1,0 +1,70 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    srand(time(0)); // random seed
+
+    int simulations = 100;
+    int rounds = 10;
+
+    vector<int> riskLevels = {10, 25, 40, 55, 70, 85};
+
+    cout << "Risk\tStag%\tHare%\tAvg Payoff\n";
+    cout << "--------------------------------------\n";
+
+    for (int risk : riskLevels) {
+
+        int totalStag = 0;
+        int totalHare = 0;
+        double totalPayoff = 0;
+
+        for (int i = 0; i < simulations; i++) {
+            for (int j = 0; j < rounds; j++) {
+
+                // random number between 0 to 1
+                double r1 = (double)rand() / RAND_MAX;
+                double r2 = (double)rand() / RAND_MAX;
+
+                // decision making
+                string A = (r1 < (100 - risk) / 100.0) ? "STAG" : "HARE";
+                string B = (r2 < (100 - risk) / 100.0) ? "STAG" : "HARE";
+
+                int payoffA, payoffB;
+
+                // payoff rules
+                if (A == "STAG" && B == "STAG") {
+                    payoffA = 10; payoffB = 10;
+                }
+                else if (A == "HARE" && B == "HARE") {
+                    payoffA = 7; payoffB = 7;
+                }
+                else if (A == "STAG" && B == "HARE") {
+                    payoffA = 0; payoffB = 7;
+                }
+                else {
+                    payoffA = 7; payoffB = 0;
+                }
+
+                // count choices
+                if (A == "STAG") totalStag++;
+                else totalHare++;
+
+                // average payoff
+                totalPayoff += (payoffA + payoffB) / 2.0;
+            }
+        }
+
+        int totalChoices = totalStag + totalHare;
+
+        double stagPercent = (double)totalStag / totalChoices * 100;
+        double harePercent = (double)totalHare / totalChoices * 100;
+        double avgPayoff = totalPayoff / totalChoices;
+
+        cout << risk << "%\t"
+             << stagPercent << "\t"
+             << harePercent << "\t"
+             << avgPayoff << "\n";
+    }
+
+    return 0;
+}
